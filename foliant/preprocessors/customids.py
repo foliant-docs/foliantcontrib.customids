@@ -1,10 +1,12 @@
+'''
+Preprocessor for Foliant documentation authoring tool.
+Provides Pandoc-style custom IDs for headings.
+'''
+
+
 from foliant.preprocessors.base import BasePreprocessor
 
 import re
-
-"""
-Preprocessor for Foliant which lets you use custom ID's for headings. 
-"""
 
 
 class Preprocessor(BasePreprocessor):

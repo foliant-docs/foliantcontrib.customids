@@ -1,4 +1,4 @@
-# СustIDs
+# СustomIDs
 
 CustomIDs is a preprocessor that allows to define custom identifiers (IDs) for headings in Markdown source by using Pandoc-style syntax in projects built with MkDocs. These IDs may be used in hyperlinks that refer to a specific part of a page.
 

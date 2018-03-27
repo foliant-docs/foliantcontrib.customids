@@ -1,6 +1,6 @@
-# Сustom heading ID's for Foliant
+# СustomIDs
 
-CustomIDs preprocessor lets user define custom identifiers for each heading. These custom ID's can be used later to create short links to a specific parts of any page. 
+CustomIDs is a preprocessor that allows to define custom identifiers (IDs) for headings in Markdown source by using Pandoc-style syntax in projects built with MkDocs. These IDs may be used in hyperlinks that refer to a specific part of a page.
 
 ## Installation
 
@@ -10,28 +10,33 @@ $ pip install foliantcontrib.customids
 
 ## Usage
 
-To apply a preprocessor add it's name to a preprocessor list in `foliant.yaml` config file, e.g.:
+To enable the preprocessor, add `customids` to `preprocessors` section in the project config:
 
 ```yaml
 preprocessors:
     - customids
 ```
 
-Custom ID must be written after heading on the same line in curly brackets. Custom ID must not contain spaces and shoud be written using latin symbols.
+Custom ID may be specified after a heading content at the same line. Examples of Markdown syntax:
 
 ```markdown
-# Heading 1 {custom_id_for_first_heading}
+# Heading 1 {#custom_id_for_first_heading}
 
-Some text goes here.
+A paragraph.
 
-## Heading 2 {custom_id_for_second_heading}
+## Heading 2 {#custom_id_for_second_heading}
 
-Some more text
+Some another paragraph.
 ```
 
-Custom ID will replace long slug which is created automatically when building a site. Resulting URL when using custom ID will look like this:
+Custom IDs must not contain spaces and non-ASCII characters.
 
-```
-http://.../index.html#custom_id 
-```
+Examples of hyperlinks that refer to custom IDs:
 
+```markdown
+[Link to Heading 1](#custom_id_for_first_heading)
+
+[Link to Heading 2 in some document at the current site](/some/page/#custom_id_for_second_heading)
+
+[Link to some heading with custom ID at an external site](https://some.site/path/to/the/page/#some_custom_id)
+```

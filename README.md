@@ -1,6 +1,6 @@
-# Сustom heading IDs for Foliant
+# Сustom heading ID's for Foliant
 
-customids preprocessor lets user define custom identifiers for each heading. These custom ID's can be used later to create short links to a specific parts of any page. 
+CustomIDs preprocessor lets user define custom identifiers for each heading. These custom ID's can be used later to create short links to a specific parts of any page. 
 
 ## Installation
 
@@ -14,15 +14,6 @@ To apply a preprocessor add it's name to a preprocessor list in `foliant.yaml` c
 
 ```yaml
 preprocessors:
-    - macros:
-        macros:
-            ref: <if backends="pandoc">{pandoc}</if><if backends="mkdocs">{mkdocs}</if>
-    - flags
-    - includes
-    - plantuml:
-        params:
-            config: !path plantuml.cfg
-    - epsconvert
     - customids
 ```
 

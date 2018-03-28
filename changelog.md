@@ -2,3 +2,7 @@
 
 * Update README.md and docstrings.
 * Update long description content type in setup.py
+
+# 1.0.2
+
+* Process first heading and all other headings separately.

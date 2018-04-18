@@ -40,7 +40,7 @@ class Preprocessor(BasePreprocessor):
         return content
 
     def apply(self):
-        if self.context['backend'] == 'mkdocs':
+        if self.context['backend'] != 'pandoc':
             for markdown_file_path in self.working_dir.rglob('*.md'):
                 with open(markdown_file_path, encoding='utf8') as markdown_file:
                     content = markdown_file.read()

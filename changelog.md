@@ -6,3 +6,7 @@
 # 1.0.2
 
 * Process first heading and all other headings separately.
+
+# 1.0.3
+
+* Allow to apply the preprocessor to all backends excepting `pandoc`.

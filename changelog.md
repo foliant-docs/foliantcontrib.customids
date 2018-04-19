@@ -9,4 +9,4 @@
 
 # 1.0.3
 
-* Allow to apply the preprocessor to all backends excepting `pandoc`.
+* Add `targets` config option.

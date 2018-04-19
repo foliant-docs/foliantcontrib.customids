@@ -10,6 +10,9 @@ import re
 
 
 class Preprocessor(BasePreprocessor):
+    defaults = {
+        'targets': [],
+    }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -40,7 +43,7 @@ class Preprocessor(BasePreprocessor):
         return content
 
     def apply(self):
-        if self.context['backend'] != 'pandoc':
+        if not self.options['targets'] or self.context['target'] in self.options['targets']:
             for markdown_file_path in self.working_dir.rglob('*.md'):
                 with open(markdown_file_path, encoding='utf8') as markdown_file:
                     content = markdown_file.read()

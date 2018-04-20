@@ -17,6 +17,20 @@ preprocessors:
     - customids
 ```
 
+The preprocessor supports the option:
+
+```
+    - customids:
+        targets:
+            - pre
+            - mkdocs
+            - site
+            - ghp
+```
+
+`targets`
+:   Allowed targets for the preprocessor. If not specified (by default), the preprocessor applies to all targets.
+
 Custom ID may be specified after a heading content at the same line. Examples of Markdown syntax:
 
 ```markdown

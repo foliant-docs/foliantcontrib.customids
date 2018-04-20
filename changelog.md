@@ -10,3 +10,4 @@
 # 1.0.3
 
 * Add `targets` config option.
+* Add logging.

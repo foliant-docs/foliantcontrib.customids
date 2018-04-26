@@ -1,6 +1,6 @@
 # СustomIDs
 
-CustomIDs is a preprocessor that allows to define custom identifiers (IDs) for headings in Markdown source by using Pandoc-style syntax in projects built with MkDocs. These IDs may be used in hyperlinks that refer to a specific part of a page.
+CustomIDs is a preprocessor that allows to define custom identifiers (IDs) for headings in Markdown source by using Pandoc-style syntax in projects built with MkDocs or another backend that provides HTML output. These IDs may be used in hyperlinks that refer to a specific part of a page.
 
 ## Installation
 
@@ -16,6 +16,20 @@ To enable the preprocessor, add `customids` to `preprocessors` section in the pr
 preprocessors:
     - customids
 ```
+
+The preprocessor supports the option:
+
+```
+    - customids:
+        targets:
+            - pre
+            - mkdocs
+            - site
+            - ghp
+```
+
+`targets`
+:   Allowed targets for the preprocessor. If not specified (by default), the preprocessor applies to all targets.
 
 Custom ID may be specified after a heading content at the same line. Examples of Markdown syntax:
 

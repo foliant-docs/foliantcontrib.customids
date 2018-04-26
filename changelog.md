@@ -6,3 +6,8 @@
 # 1.0.2
 
 * Process first heading and all other headings separately.
+
+# 1.0.3
+
+* Add `targets` config option.
+* Add logging.

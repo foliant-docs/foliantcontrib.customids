@@ -5,12 +5,14 @@ Provides Pandoc-style custom IDs for headings.
 
 
 import re
+from pathlib import Path
 
 from foliant.preprocessors.base import BasePreprocessor
 
 
 class Preprocessor(BasePreprocessor):
     defaults = {
+        'stylesheet_path': Path('customids.css'),
         'targets': [],
     }
 
@@ -21,28 +23,67 @@ class Preprocessor(BasePreprocessor):
 
         self.logger.debug(f'Preprocessor inited: {self.__dict__}')
 
-    def parse_custom_ids(self, content: str) -> str:
+        self._stylesheet = self._get_stylesheet(self.options['stylesheet_path'])
+
+    def _get_stylesheet(self, stylesheet_file_path: Path) -> str:
+        self.logger.debug(f'Stylesheet file path: {stylesheet_file_path}')
+
+        if stylesheet_file_path.exists():
+            self.logger.debug('Using stylesheet from the file')
+
+            with open(stylesheet_file_path, encoding='utf8') as stylesheet_file:
+                return stylesheet_file.read()
+
+        else:
+            self.logger.debug('Stylesheet file does not exist; using default stylesheet')
+
+            return '''
+.custom_id_anchor_container {
+    height: 0;
+    overflow: hidden;
+    margin: -1.6rem 0 0;
+    padding: 0;
+    }
+.custom_id_anchor {
+    position: relative;
+    }
+.custom_id_anchor::before {
+    content: '\\00a0';
+    }
+.custom_id_anchor_first {
+    top: -999rem;
+    }
+.custom_id_anchor_ordinary {
+    top: -2.8rem;
+    }
+'''
+
+    def process_custom_ids(self, content: str) -> str:
         first_heading_pattern = re.compile(
             "^(?P<first_hashes>#{1,6}) +(?P<first_heading>[^\n]+) +\{#(?P<first_custom_id>\S+)\}\n"
         )
 
-        other_headings_pattern = re.compile(
-            "\n+(?P<other_hashes>#{1,6}) +(?P<other_heading>[^\n]+) +\{#(?P<other_custom_id>\S+)\}\n"
+        ordinary_headings_pattern = re.compile(
+            "\n+(?P<ordinary_hashes>#{1,6}) +(?P<ordinary_heading>[^\n]+) +\{#(?P<ordinary_custom_id>\S+)\}\n"
         )
 
         content = re.sub(
             first_heading_pattern,
-            "\g<first_hashes> \g<first_heading><a id=\"\g<first_custom_id>\" class=\"custom_id_anchor\"></a>\n",
+            "<div class=\"custom_id_anchor_container\">" +
+            "<div id=\"\g<first_custom_id>\" class=\"custom_id_anchor custom_id_anchor_first\">" +
+            "</div></div>\n\n\g<first_hashes> \g<first_heading>\n\n",
             content
         )
 
         content = re.sub(
-            other_headings_pattern,
-            "<a id=\"\g<other_custom_id>\" class=\"custom_id_anchor\"></a>\n\n\g<other_hashes> \g<other_heading>\n",
+            ordinary_headings_pattern,
+            "\n\n<div class=\"custom_id_anchor_container\">" +
+            "<div id=\"\g<ordinary_custom_id>\" class=\"custom_id_anchor custom_id_anchor_ordinary\">" +
+            "</div></div>\n\n\g<ordinary_hashes> \g<ordinary_heading>\n\n",
             content
         )
 
-        content = "<style>.custom_id_anchor::before {content: '\\00a0'}</style>\n\n" + content
+        content = f'<style>\n{self._stylesheet}\n</style>\n\n{content}'
 
         self.logger.debug('Content modified')
 
@@ -62,6 +103,6 @@ class Preprocessor(BasePreprocessor):
                     content = markdown_file.read()
 
                 with open(markdown_file_path, 'w', encoding='utf8') as markdown_file:
-                    markdown_file.write(self.parse_custom_ids(content))
+                    markdown_file.write(self.process_custom_ids(content))
 
         self.logger.info('Preprocessor applied')

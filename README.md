@@ -17,10 +17,11 @@ preprocessors:
     - customids
 ```
 
-The preprocessor supports the option:
+The preprocessor supports the following options:
 
-```
+```yaml
     - customids:
+        stylesheet_path: !path customids.css
         targets:
             - pre
             - mkdocs
@@ -28,20 +29,41 @@ The preprocessor supports the option:
             - ghp
 ```
 
+`stylesheet_path`
+:   Path to the CSS stylesheet file. This stylesheet should define rules for `.custom_id_anchor_container`, `.custom_id_anchor`, `.custom_id_anchor_first` and `.custom_id_anchor_ordinary` classes. Default path is `customids.css`. If stylesheet file does not exist, default built-in stylesheet will be used.
+
 `targets`
 :   Allowed targets for the preprocessor. If not specified (by default), the preprocessor applies to all targets.
 
 Custom ID may be specified after a heading content at the same line. Examples of Markdown syntax:
 
 ```markdown
-# Heading 1 {#custom_id_for_first_heading}
+# First Heading {#custom_id_for_first_heading}
 
 A paragraph.
 
-## Heading 2 {#custom_id_for_second_heading}
+## Ordinary Heading {#custom_id_for_second_heading}
 
 Some another paragraph.
 ```
+
+This Markdown source will be finally transformed into the HTML code:
+
+```html
+<div class="custom_id_anchor_container"><div id="custom_id_for_first_heading" class="custom_id_anchor custom_id_anchor_first"></div></div>
+
+<h1>First Heading</h1>
+
+<p>A paragraph.</p>
+
+<div class="custom_id_anchor_container"><div id="custom_id_for_second_heading" class="custom_id_anchor custom_id_anchor_ordinary"></div></div>
+
+<h2>Ordinary Heading</h2>
+
+<p>Some another paragraph.</p>
+```
+
+(Note that CustomIDs preprocessor does not convert Markdown syntax into HTML; it only inserts HTML tags `<div class="custom_id_anchor_container">...</div>` into Markdown code.)
 
 Custom IDs must not contain spaces and non-ASCII characters.
 

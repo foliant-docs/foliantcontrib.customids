@@ -12,7 +12,7 @@ from foliant.preprocessors.base import BasePreprocessor
 
 class Preprocessor(BasePreprocessor):
     defaults = {
-        'stylesheet_path': Path('customids.css'),
+        'stylesheet_path': 'customids.css',
         'targets': [],
     }
 
@@ -23,7 +23,7 @@ class Preprocessor(BasePreprocessor):
 
         self.logger.debug(f'Preprocessor inited: {self.__dict__}')
 
-        self._stylesheet = self._get_stylesheet(self.options['stylesheet_path'].resolve())
+        self._stylesheet = self._get_stylesheet(Path(self.options['stylesheet_path']).resolve())
 
     def _get_stylesheet(self, stylesheet_file_path: Path) -> str:
         self.logger.debug(f'Stylesheet file path: {stylesheet_file_path}')

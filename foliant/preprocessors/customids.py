@@ -23,7 +23,7 @@ class Preprocessor(BasePreprocessor):
 
         self.logger.debug(f'Preprocessor inited: {self.__dict__}')
 
-        self._stylesheet = self._get_stylesheet(self.options['stylesheet_path'])
+        self._stylesheet = self._get_stylesheet(self.options['stylesheet_path'].resolve())
 
     def _get_stylesheet(self, stylesheet_file_path: Path) -> str:
         self.logger.debug(f'Stylesheet file path: {stylesheet_file_path}')
@@ -59,35 +59,67 @@ class Preprocessor(BasePreprocessor):
 '''
 
     def process_custom_ids(self, content: str) -> str:
-        first_heading_pattern = re.compile(
-            "^(?P<first_hashes>#{1,6}) +(?P<first_heading>[^\n]+) +\{#(?P<first_custom_id>\S+)\}\n"
+        processed_content = ''
+        headings_count = 0
+
+        heading_pattern = re.compile(
+            r'(^\#{1,6}\s+.*\S+\s*$)',
+            flags=re.MULTILINE
         )
 
-        ordinary_headings_pattern = re.compile(
-            "\n+(?P<ordinary_hashes>#{1,6}) +(?P<ordinary_heading>[^\n]+) +\{#(?P<ordinary_custom_id>\S+)\}\n"
-        )
+        content_parts = heading_pattern.split(content)
 
-        content = re.sub(
-            first_heading_pattern,
-            "<div class=\"custom_id_anchor_container\">" +
-            "<div id=\"\g<first_custom_id>\" class=\"custom_id_anchor custom_id_anchor_first\">" +
-            "</div></div>\n\n\g<first_hashes> \g<first_heading>\n\n",
-            content
-        )
+        self.logger.debug(f'{content_parts}')
 
-        content = re.sub(
-            ordinary_headings_pattern,
-            "\n\n<div class=\"custom_id_anchor_container\">" +
-            "<div id=\"\g<ordinary_custom_id>\" class=\"custom_id_anchor custom_id_anchor_ordinary\">" +
-            "</div></div>\n\n\g<ordinary_hashes> \g<ordinary_heading>\n\n",
-            content
-        )
+        for content_part in content_parts:
+            heading = heading_pattern.fullmatch(content_part)
 
-        content = f'<style>\n{self._stylesheet}\n</style>\n\n{content}'
+            if heading:
+                headings_count += 1
+
+                self.logger.debug(f'Heading #{headings_count} found: {heading}')
+
+                identified_heading_pattern = re.compile(
+                    r'^(?P<hashes>\#{1,6})\s+(?P<heading_content>.*\S+)\s+\{\#(?P<custom_id>\S+)\}\s*$',
+                    flags=re.MULTILINE
+                )
+
+                identified_heading = identified_heading_pattern.fullmatch(content_part)
+
+                if identified_heading:
+                    if headings_count == 1:
+                        self.logger.debug(
+                            f'Adding an anchor to the first identified heading: {identified_heading}'
+                        )
+
+                        content_part = re.sub(
+                            identified_heading_pattern,
+                            "<div class=\"custom_id_anchor_container\">" +
+                            "<div id=\"\g<custom_id>\" class=\"custom_id_anchor custom_id_anchor_first\">" +
+                            "</div></div>\n\n\g<hashes> \g<heading_content>\n\n",
+                            content_part
+                        )
+
+                    elif headings_count > 1:
+                        self.logger.debug(
+                            f'Adding an anchor to the ordinary identified heading: {identified_heading}'
+                        )
+
+                        content_part = re.sub(
+                            identified_heading_pattern,
+                            "\n\n<div class=\"custom_id_anchor_container\">" +
+                            "<div id=\"\g<custom_id>\" class=\"custom_id_anchor custom_id_anchor_ordinary\">" +
+                            "</div></div>\n\n\g<hashes> \g<heading_content>\n\n",
+                            content_part
+                        )
+
+            processed_content += content_part
+
+        processed_content = f'<style>\n{self._stylesheet}\n</style>\n\n{processed_content}'
 
         self.logger.debug('Content modified')
 
-        return content
+        return processed_content
 
     def apply(self):
         self.logger.info('Applying preprocessor')

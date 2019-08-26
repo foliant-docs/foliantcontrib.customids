@@ -30,7 +30,7 @@ The preprocessor supports the following options:
 ```
 
 `stylesheet_path`
-:   Path to the CSS stylesheet file. This stylesheet should define rules for `.custom_id_anchor_container`, `.custom_id_anchor`, `.custom_id_anchor_first` and `.custom_id_anchor_ordinary` classes. Default path is `customids.css`. If stylesheet file does not exist, default built-in stylesheet will be used.
+:   Path to the CSS stylesheet file. This stylesheet should define rules for `.custom_id_anchor_container`, `.custom_id_anchor_container_level_N`, `.custom_id_anchor`, and `.custom_id_anchor_level_N` classes. Here `N` is the heading level (`1` to `6`). Default path is `customids.css`. If stylesheet file does not exist, default built-in stylesheet will be used.
 
 `targets`
 :   Allowed targets for the preprocessor. If not specified (by default), the preprocessor applies to all targets.
@@ -42,7 +42,7 @@ Custom ID may be specified after a heading content at the same line. Examples of
 
 A paragraph.
 
-## Ordinary Heading {#custom_id_for_second_heading}
+## Second Heading {#custom_id_for_second_heading}
 
 Some another paragraph.
 ```
@@ -50,15 +50,15 @@ Some another paragraph.
 This Markdown source will be finally transformed into the HTML code:
 
 ```html
-<div class="custom_id_anchor_container"><div id="custom_id_for_first_heading" class="custom_id_anchor custom_id_anchor_first"></div></div>
+<div class="custom_id_anchor_container custom_id_anchor_container_level_1"><div id="custom_id_for_first_heading" class="custom_id_anchor custom_id_anchor_level_1"></div></div>
 
 <h1>First Heading</h1>
 
 <p>A paragraph.</p>
 
-<div class="custom_id_anchor_container"><div id="custom_id_for_second_heading" class="custom_id_anchor custom_id_anchor_ordinary"></div></div>
+<div class="custom_id_anchor_container custom_id_anchor_container_level_2"><div id="custom_id_for_second_heading" class="custom_id_anchor custom_id_anchor_level_2"></div></div>
 
-<h2>Ordinary Heading</h2>
+<h2>Second Heading</h2>
 
 <p>Some another paragraph.</p>
 ```

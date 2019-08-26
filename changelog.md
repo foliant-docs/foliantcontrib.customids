@@ -1,3 +1,7 @@
+# 1.0.6
+
+-   Allow to define custom styles for headings of each level.
+
 # 1.0.5
 
 -   Do not rewrite source Markdown file if an error occurs.

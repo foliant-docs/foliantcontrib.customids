@@ -41,8 +41,20 @@ class Preprocessor(BasePreprocessor):
 .custom_id_anchor_container {
     height: 0;
     overflow: hidden;
-    margin: -1.6rem 0 0;
+    margin-left: 0;
+    margin-right: 0;
+    margin-bottom: 0;
     padding: 0;
+    }
+.custom_id_anchor_container_level_1 {
+    margin-top: 0;
+    }
+.custom_id_anchor_container_level_2,
+.custom_id_anchor_container_level_3,
+.custom_id_anchor_container_level_4,
+.custom_id_anchor_container_level_5,
+.custom_id_anchor_container_level_6 {
+    margin-top: -.8rem;
     }
 .custom_id_anchor {
     position: relative;
@@ -50,17 +62,28 @@ class Preprocessor(BasePreprocessor):
 .custom_id_anchor::before {
     content: '\\00a0';
     }
-.custom_id_anchor_first {
-    top: -999rem;
+.custom_id_anchor_level_1 {
+    top: -3.45rem;
     }
-.custom_id_anchor_ordinary {
-    top: -2.8rem;
+.custom_id_anchor_level_2 {
+    top: -1.4rem;
+    }
+.custom_id_anchor_level_3 {
+    top: -1.85rem;
+    }
+.custom_id_anchor_level_4 {
+    top: -2.65rem;
+    }
+.custom_id_anchor_level_5 {
+    top: -2.75rem;
+    }
+.custom_id_anchor_level_6 {
+    top: -2.75rem;
     }
 '''
 
     def process_custom_ids(self, content: str) -> str:
         processed_content = ''
-        headings_count = 0
 
         heading_pattern = re.compile(
             r'(^\#{1,6}\s+.*\S+\s*$)',
@@ -69,15 +92,11 @@ class Preprocessor(BasePreprocessor):
 
         content_parts = heading_pattern.split(content)
 
-        self.logger.debug(f'{content_parts}')
-
         for content_part in content_parts:
             heading = heading_pattern.fullmatch(content_part)
 
             if heading:
-                headings_count += 1
-
-                self.logger.debug(f'Heading #{headings_count} found: {heading}')
+                self.logger.debug(f'Heading found: {heading}')
 
                 identified_heading_pattern = re.compile(
                     r'^(?P<hashes>\#{1,6})\s+(?P<heading_content>.*\S+)\s+\{\#(?P<custom_id>\S+)\}\s*$',
@@ -87,31 +106,22 @@ class Preprocessor(BasePreprocessor):
                 identified_heading = identified_heading_pattern.fullmatch(content_part)
 
                 if identified_heading:
-                    if headings_count == 1:
-                        self.logger.debug(
-                            f'Adding an anchor to the first identified heading: {identified_heading}'
-                        )
+                    level = len(identified_heading.group('hashes'))
 
-                        content_part = re.sub(
-                            identified_heading_pattern,
-                            "<div class=\"custom_id_anchor_container\">" +
-                            "<div id=\"\g<custom_id>\" class=\"custom_id_anchor custom_id_anchor_first\">" +
-                            "</div></div>\n\n\g<hashes> \g<heading_content>\n\n",
-                            content_part
-                        )
+                    self.logger.debug(
+                        f'Adding an anchor to the identified heading of level {level}: {identified_heading}'
+                    )
 
-                    elif headings_count > 1:
-                        self.logger.debug(
-                            f'Adding an anchor to the ordinary identified heading: {identified_heading}'
-                        )
+                    content_part = re.sub(
+                        identified_heading_pattern,
+                        f'\n\n<div class="custom_id_anchor_container custom_id_anchor_container_level_{level}">' +
+                        f'<div id="\g<custom_id>" class="custom_id_anchor custom_id_anchor_level_{level}">' +
+                        '</div></div>\n\n\g<hashes> \g<heading_content>\n\n',
+                        content_part
+                    )
 
-                        content_part = re.sub(
-                            identified_heading_pattern,
-                            "\n\n<div class=\"custom_id_anchor_container\">" +
-                            "<div id=\"\g<custom_id>\" class=\"custom_id_anchor custom_id_anchor_ordinary\">" +
-                            "</div></div>\n\n\g<hashes> \g<heading_content>\n\n",
-                            content_part
-                        )
+                else:
+                    self.logger.debug('This heading has no custom ID, skipping')
 
             processed_content += content_part
 

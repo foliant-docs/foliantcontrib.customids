@@ -1,3 +1,7 @@
+# 1.0.7
+
+-   Styles are now inserted after YAML Front Matter if that is present.
+
 # 1.0.6
 
 -   Allow to define custom styles for headings of each level.

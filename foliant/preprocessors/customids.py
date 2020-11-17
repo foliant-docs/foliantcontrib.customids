@@ -9,6 +9,8 @@ from pathlib import Path
 
 from foliant.preprocessors.base import BasePreprocessor
 
+from foliant.contrib.utils import prepend_file
+
 
 class Preprocessor(BasePreprocessor):
     defaults = {
@@ -125,7 +127,7 @@ class Preprocessor(BasePreprocessor):
 
             processed_content += content_part
 
-        processed_content = f'<style>\n{self._stylesheet}\n</style>\n\n{processed_content}'
+        # processed_content = f'<style>\n{self._stylesheet}\n</style>\n\n{processed_content}'
 
         self.logger.debug('Content modified')
 
@@ -149,5 +151,8 @@ class Preprocessor(BasePreprocessor):
                 if processed_content:
                     with open(markdown_file_path, 'w', encoding='utf8') as markdown_file:
                         markdown_file.write(processed_content)
+
+                    self.logger.debug(f'Adding styles to {markdown_file}')
+                    prepend_file(markdown_file_path, f'<style>\n{self._stylesheet}\n</style>\n\n')
 
         self.logger.info('Preprocessor applied')

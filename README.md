@@ -1,3 +1,5 @@
+[![](https://img.shields.io/pypi/v/foliantcontrib.customids.svg)](https://pypi.org/project/foliantcontrib.customids/) [![](https://img.shields.io/github/v/tag/foliant-docs/foliantcontrib.customids.svg?label=GitHub)](https://github.com/foliant-docs/foliantcontrib.customids)
+
 # СustomIDs
 
 CustomIDs is a preprocessor that allows to define custom identifiers (IDs) for headings in Markdown source by using Pandoc-style syntax in projects built with MkDocs or another backend that provides HTML output. These IDs may be used in hyperlinks that refer to a specific part of a page.

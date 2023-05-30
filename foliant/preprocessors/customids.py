@@ -153,6 +153,12 @@ class Preprocessor(BasePreprocessor):
                         markdown_file.write(processed_content)
 
                     self.logger.debug(f'Adding styles to {markdown_file}')
-                    prepend_file(markdown_file_path, f'<style>\n{self._stylesheet}\n</style>\n\n')
+                    if self.context['backend'] == "hugo":
+                        (self.working_dir/"foliant_template/assets/scss/").mkdir(parents=True, exist_ok=True)
+                        with open(self.working_dir/"foliant_template/assets/scss/extra.scss", 'w', encoding='utf8') as file:
+                            file.write("// customids preprocessor stylesheet\n" + self._stylesheet)
+                    else:
+                        prepend_file(markdown_file_path, f'<style>\n{self._stylesheet}\n</style>\n\n')
+
 
         self.logger.info('Preprocessor applied')
